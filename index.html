@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-SIPAG - Elektronik Slip & Pantauan Gaji</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --army-dark: #3A421A; 
+      --army-primary: #4C5E32; 
+      --army-light: #C2CBB5;
+      --army-bg: #F4F6F0; 
+      --text-dark: #212521;
+      --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    body { 
+      background-color: var(--army-bg); 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+      color: var(--text-dark); 
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .login-container { max-width: 440px; margin-top: 80px; }
+    .card-login { 
+      border: 1px solid rgba(194, 203, 181, 0.5); 
+      border-radius: 20px; 
+      background: #ffffff; 
+      box-shadow: 0 15px 35px rgba(58, 66, 26, 0.08);
+      transition: var(--transition-smooth);
+    }
+    .login-header { 
+      color: var(--army-dark); 
+      font-weight: 800; 
+      letter-spacing: 1.5px;
+    }
+    
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 1.5px solid #E1E5DC;
+      padding: 12px 16px;
+      transition: var(--transition-smooth);
+      font-size: 0.95rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--army-primary);
+      box-shadow: 0 0 0 4px rgba(85, 107, 47, 0.15);
+    }
+    .btn-army { 
+      background-color: var(--army-primary); 
+      color: white; 
+      border: none; 
+      font-weight: 600;
+      border-radius: 10px;
+      transition: var(--transition-smooth);
+    }
+    .btn-army:hover { 
+      background-color: var(--army-dark); 
+      color: white; 
+      transform: translateY(-1px);
+      box-shadow: 0 5px 15px rgba(76, 94, 50, 0.3);
+    }
+    
+    .dashboard-container { display: none; padding: 30px; animation: fadeIn 0.5s ease; }
+    .table-responsive { 
+      background: white; 
+      padding: 20px; 
+      border-radius: 20px; 
+      border: none;
+      box-shadow: var(--card-shadow); 
+    }
+    .table { margin-bottom: 0; vertical-align: middle; }
+    .table-dark { background-color: var(--army-dark); color: white; border: none; }
+    .table th { font-weight: 600; letter-spacing: 0.5px; font-size: 0.85rem; padding: 15px; }
+    .table td { padding: 15px; font-size: 0.95rem; }
+    
+    .filter-card { 
+      background: white; 
+      padding: 24px; 
+      border-radius: 20px; 
+      border: none;
+      margin-bottom: 25px; 
+      box-shadow: var(--card-shadow);
+    }
+    
+    #slipGajiContainer { position: relative; overflow: hidden; background: white; min-height: 850px; }
+    #slipGajiContent { font-family: 'Courier New', monospace; color: black; padding: 40px; position: relative; z-index: 2; font-size: 13px; }
+    
+    .watermark-bg {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
+      opacity: 0.06; transform: rotate(-30deg); pointer-events: none; z-index: 1;
+    }
+    .watermark-text { font-size: 28px; font-weight: bold; color: #000; margin: 30px; white-space: nowrap; }
+
+    .pdf-header { text-align: center; font-weight: bold; font-size: 1.4rem; border-bottom: 2px solid black; margin-bottom: 20px; padding-bottom: 5px; }
+    .pdf-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .pdf-label-group { display: flex; flex: 1; }
+    .pdf-no { width: 30px; }
+    .pdf-money { width: 160px; text-align: right; display: flex; justify-content: space-between; }
+    
+    #loadingOverlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(244, 246, 240, 0.85); backdrop-filter: blur(8px); z-index: 9999; 
+      flex-direction: column; align-items: center; justify-content: center;
+    }
+    
+    .password-container { position: relative; }
+    .toggle-password {
+      position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; color: var(--army-primary); z-index: 10; transition: var(--transition-smooth);
+    }
+    .toggle-password:hover { color: var(--army-dark); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="spinner-border text-success" style="width: 3rem; height: 3rem; color: var(--army-primary) !important;" role="status"></div>
+  <span class="mt-3 fw-bold tracking-wide text-secondary" style="font-size: 0.85rem; letter-spacing: 2px;">MEMPROSES DATA</span>
+</div>
+
+<!-- HALAMAN LOGIN -->
+<div id="loginPage" class="container login-container">
+  <div class="card card-login p-5">
+    <h2 class="text-center mb-1 login-header">E-SIPAG</h2>
+    <p class="text-center text-muted mb-5 small" style="letter-spacing: 0.5px;">Elektronik Slip & Pantauan Gaji</p>
+    
+    <div class="mb-4">
+      <label class="form-label fw-bold small text-secondary">NRP / NIP</label>
+      <input type="text" id="nrp" class="form-control form-control-lg" placeholder="Masukkan NRP/NIP">
+    </div>
+    
+    <div class="mb-5">
+      <label class="form-label fw-bold small text-secondary">PASSWORD</label>
+      <div class="password-container">
+        <input type="password" id="pass" class="form-control form-control-lg" placeholder="Masukkan Password">
+        <span class="toggle-password" onclick="togglePasswordVisibility('pass', this)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+    
+    <button class="btn btn-army w-100 mb-3 fw-bold p-3" onclick="handleLogin()">MASUK SISTEM</button>
+    
+    <div class="text-center mt-4 small">
+      <a href="javascript:void(0)" onclick="alert('Silakan hubungi Juru Bayar')" class="text-danger fw-bold text-decoration-none">Lupa Password?</a>
+      <span class="mx-2 text-muted">|</span>
+      <a href="javascript:void(0)" onclick="showSignup()" class="fw-bold text-decoration-none" style="color: var(--army-primary)">Daftar Akun Baru</a>
+    </div>
+  </div>
+</div>
+
+<!-- HALAMAN DASHBOARD -->
+<div id="dashboardPage" class="container-fluid dashboard-container">
+  <div class="d-flex justify-content-between align-items-center bg-white p-4 rounded-4 shadow-sm mb-4 border-0">
+    <div>
+      <h4 id="welcomeMsg" class="mb-1 fw-bold">Halo</h4>
+      <span class="badge px-3 py-2 rounded-pill" id="userRole" style="background-color: var(--army-primary);"></span>
+    </div>
+    <button class="btn btn-outline-danger px-4 fw-bold rounded-3" style="transition: var(--transition-smooth);" onclick="handleLogoutUser()">LOGOUT</button>
+  </div>
+
+  <div class="filter-card">
+    <div class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label fw-bold small text-secondary">Filter Bulan</label>
+        <select id="filterBulan" class="form-select" onchange="applyFilters()">
+          <option value="">Semua Bulan</option>
+          <option value="Januari">Januari</option><option value="Februari">Februari</option>
+          <option value="Maret">Maret</option><option value="April">April</option>
+          <option value="Mei">Mei</option><option value="Juni">Juni</option>
+          <option value="Juli">Juli</option><option value="Agustus">Agustus</option>
+          <option value="September">September</option><option value="Oktober">Oktober</option>
+          <option value="November">November</option><option value="Desember">Desember</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-bold small text-secondary">Filter Tahun</label>
+        <select id="filterTahun" class="form-select" onchange="applyFilters()">
+          <option value="">Semua Tahun</option>
+          <option value="2026">2026</option><option value="2027">2027</option>
+          <option value="2028">2028</option><option value="2029">2029</option>
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-light border w-100 fw-bold py-2" style="border-radius:10px; transition: var(--transition-smooth);" onclick="resetFilters()">RESET FILTER</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead class="table-dark text-uppercase">
+        <tr>
+          <th class="rounded-start-3">Bulan</th><th>Tahun</th><th>Nama</th><th>Pangkat</th><th>NRP/NIP</th><th class="text-center rounded-end-3">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL SLIP DETAIL -->
+<div class="modal fade" id="detailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header bg-dark text-white border-0 py-3">
+        <h5 class="modal-title fw-bold font-monospace small" style="letter-spacing:1px;">RINCIAN SLIP GAJI</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="slipGajiContainer">
+          <div id="watermarkArea" class="watermark-bg"></div>
+          <div id="slipGajiContent"></div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 bg-light">
+        <button type="button" class="btn btn-danger px-4 fw-bold rounded-3" onclick="downloadPDF()">DOWNLOAD PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SIGNUP -->
+<div class="modal fade" id="signupModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header text-white border-0 py-3" style="background-color: var(--army-primary);">
+        <h5 class="fw-bold mb-0">PENDAFTARAN E-SIPAG</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="mb-3"><label class="form-label fw-bold small text-secondary">NRP / NIP</label><input type="text" id="regNrp" class="form-control"></div>
+        <div class="mb-3"><label class="form-label fw-bold small text-secondary">Nama Lengkap</label><input type="text" id="regNama" class="form-control"></div>
+        <div class="mb-4">
+          <label class="form-label fw-bold small text-secondary">Password Baru</label>
+          <div class="password-container">
+            <input type="password" id="regPass" class="form-control">
+            <span class="toggle-password" onclick="togglePasswordVisibility('regPass', this)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+        <button class="btn btn-army w-100 p-3 fw-bold" onclick="handleSignup()">DAFTAR SEKARANG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // PASTE URL DEPLOYMENT APPS SCRIPT ANDA DI SINI!
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbx...MASUKKAN_URL_DEPLOY_ANDA.../exec";
+
+  let rawDataGaji = []; 
+  let currentUser = { nrp: "", nama: "" };
+  let currentPeriode = "";
+
+  function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
+  function formatIndo(a) { return (a === "" || a == null || a === 0 || a === "-") ? "0" : parseFloat(a).toLocaleString('id-ID'); }
+
+  // Fungsi Fetch umum pengganti google.script.run
+  async function callGAS(payload) {
+    const res = await fetch(GAS_URL, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  }
+
+  function togglePasswordVisibility(inputId, iconElement) {
+    const passwordInput = document.getElementById(inputId);
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      iconElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/><path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8q.086.13.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/></svg>';
+    } else {
+      passwordInput.type = "password";
+      iconElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>';
+    }
+  }
+
+  async function handleLogin() {
+    const nrp = document.getElementById('nrp').value;
+    const pass = document.getElementById('pass').value;
+    if(!nrp || !pass) return alert("Isi NRP/NIP dan Password!");
+    toggleLoading(true);
+
+    try {
+      const res = await callGAS({ action: "login", nrp: nrp, password: pass });
+      toggleLoading(false);
+      if(res.status === "success") {
+        currentUser = { nrp: res.nrp, nama: res.nama };
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('dashboardPage').style.display = 'block';
+        document.getElementById('welcomeMsg').innerText = "Halo, " + res.nama;
+        document.getElementById('userRole').innerText = res.role.toUpperCase();
+        loadData(res.nrp, res.role);
+      } else { alert(res.message); }
+    } catch(err) {
+      toggleLoading(false);
+      alert("Gagal terhubung ke server!");
+    }
+  }
+
+  async function loadData(nrp, role) {
+    const data = await callGAS({ action: "getGaji", nrp: nrp, role: role });
+    rawDataGaji = data.rows || [];
+    renderTable(rawDataGaji);
+  }
+
+  function renderTable(rows) {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = rows.map((row) => {
+      const originalIndex = rawDataGaji.findIndex(r => r[5]?.toString().trim() === row[5]?.toString().trim() && r[1] === row[1] && r[2] === row[2]);
+      return `
+        <tr>
+          <td>${row[1]}</td>
+          <td>${row[2]}</td>
+          <td class="fw-semibold">${row[3]}</td>
+          <td>${row[4]}</td>
+          <td><span class="badge bg-light text-dark font-monospace border">${row[5]}</span></td>
+          <td class="text-center"><button class="btn btn-sm btn-army px-3 fw-bold" onclick="showDetail(${originalIndex})">DETAIL</button></td>
+        </tr>
+      `;
+    }).join('') || "<tr><td colspan='6' class='text-center text-muted py-4'>Data Tidak Ditemukan</td></tr>";
+  }
+
+  function applyFilters() {
+    const bulan = document.getElementById('filterBulan').value;
+    const tahun = document.getElementById('filterTahun').value;
+    const filtered = rawDataGaji.filter(row => (bulan === "" || row[1] === bulan) && (tahun === "" || row[2].toString() === tahun));
+    renderTable(filtered);
+  }
+
+  function resetFilters() {
+    document.getElementById('filterBulan').value = "";
+    document.getElementById('filterTahun').value = "";
+    renderTable(rawDataGaji);
+  }
+
+  function showDetail(index) {
+    const data = rawDataGaji[index];
+    if(!data) return alert("Data tidak valid.");
+    currentPeriode = data[1] + " " + data[2];
+    
+    const bulanData = data[1]; 
+    const tahunData = data[2];
+
+    document.getElementById('watermarkArea').innerHTML = Array(15).fill(`<div class="watermark-text">${data[5]}</div>`).join('');
+    
+    callGAS({ action: "addLog", nrp: currentUser.nrp, nama: currentUser.nama, aksi: "LIHAT DETAIL", periode: currentPeriode });
+
+    const slipHtml = `
+      <div class="pdf-header">RINCIAN SLIP GAJI</div>
+      <div style="margin-bottom: 20px;">
+        <table style="width: 100%;">
+          <tr><td width="160">NAMA</td><td>: <b>${data[3]}</b></td></tr>
+          <tr><td>PANGKAT / NRP</td><td>: ${data[4]} / ${data[5]}</td></tr>
+          <tr><td>BULAN / TAHUN</td><td>: ${bulanData.toUpperCase()} ${tahunData}</td></tr>
+        </table>
+      </div>
+
+      <div class="pdf-row" style="font-weight:bold; border-top:2px solid black; padding-top:5px;">
+        <span>GAJI BERSIH DIBAYARKAN</span>
+        <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[6])}</span></div>
+      </div>
+
+      <div style="margin-top:15px; font-weight:bold; text-decoration:underline;">RINCIAN POTONGAN</div>
+      
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">1.</span><span>Potongan TWP</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[7])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">2.</span><span>BRI Sampangan</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[8])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">3.</span><span>BRI Pandanaran</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[9])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">4.</span><span>BPD Syariah</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[10])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">5.</span><span>BRI Watugong</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[11])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">6.</span><span>BPD Jateng</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[12])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">7.</span><span>Potongan BTN</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[13])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">8.</span><span>Bank Mandiri</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[14])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">9.</span><span>Potongan Persit</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[15])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">10.</span><span>Potongan Primkopad</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[16])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">11.</span><span>Arisan KORPRI</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[17])}</span></div></div>
+      
+      <div class="pdf-row" style="font-weight:bold; border-top:1px solid black; margin-top:5px;">
+        <span>JUMLAH TOTAL POTONGAN</span>
+        <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[17])}</span></div>
+      </div>
+
+      <div class="pdf-row" style="font-weight:bold; border-top:2px solid black; padding-top:2px; font-size: 1.1rem;">
+        <span>JUMLAH DITERIMA (THP)</span>
+        <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[18])}</span></div>
+      </div>
+
+      <div style="margin-top:60px; float:right; text-align:center; width:250px;">
+        <div>Semarang, 1 ${bulanData} ${tahunData}</div>
+        <div style="margin-top:5px;">BA JURU BAYAR</div>
+        <div style="margin-top:75px;"><b><u>AGUS SUTINO</u></b></div>
+        <div>SERDA NRP 31030137060282</div>
+      </div>
+      <div style="clear:both;"></div>
+    `;
+    
+    document.getElementById('slipGajiContent').innerHTML = slipHtml;
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+  }
+
+  function downloadPDF() {
+    callGAS({ action: "addLog", nrp: currentUser.nrp, nama: currentUser.nama, aksi: "DOWNLOAD PDF", periode: currentPeriode });
+    const element = document.getElementById('slipGajiContainer');
+    const opt = {
+      margin: 10, filename: `Slip_${currentUser.nrp}_${currentPeriode}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+
+  function showSignup() { new bootstrap.Modal(document.getElementById('signupModal')).show(); }
+  
+  async function handleSignup() {
+    const regNrp = document.getElementById('regNrp').value;
+    const payload = { nrp: regNrp, nama: document.getElementById('regNama').value, pass: document.getElementById('regPass').value };
+    if(!payload.nrp || !payload.nama || !payload.pass) return alert("Lengkapi data!");
+    toggleLoading(true);
+
+    const res = await callGAS({ action: "register", payload: payload });
+    toggleLoading(false); alert(res);
+    const modal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+    if (modal) modal.hide();
+    document.getElementById('nrp').value = regNrp;
+  }
+
+  function handleLogoutUser() {
+    currentUser = { nrp: "", nama: "" };
+    rawDataGaji = [];
+    currentPeriode = "";
+    document.getElementById('nrp').value = "";
+    document.getElementById('pass').value = "";
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'block';
+  }
+</script>
+</body>
+</html>
