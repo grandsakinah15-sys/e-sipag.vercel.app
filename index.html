@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>E-SIPAG — Elektronik Slip &amp; Pantauan Gaji</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
-      /* --- Palet Army / Loreng --- */
       --army-dark: #2F3A1A;
       --army-primary: #4C5E32;
       --army-olive: #6B7A3D;
@@ -18,36 +18,23 @@
       --army-tan: #C9BD91;
       --army-bg: #F4F6F0;
       --brass: #A9812F;
+      --danger-soft: #B3423A;
       --text-dark: #212521;
       --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+      --card-shadow-hover: 0 12px 34px rgba(0, 0, 0, 0.1);
       --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       --font-display: 'Oswald', system-ui, sans-serif;
       --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
-
     * { -webkit-tap-highlight-color: transparent; }
-
-    body {
-      background-color: var(--army-bg);
-      font-family: var(--font-body);
-      color: var(--text-dark);
-      -webkit-font-smoothing: antialiased;
-      margin: 0;
-    }
+    body { background-color: var(--army-bg); font-family: var(--font-body); color: var(--text-dark); -webkit-font-smoothing: antialiased; margin: 0; }
 
     /* ============================================================
-       LOGIN PAGE — nuansa loreng sebagai elemen identitas utama
+       LOGIN PAGE
        ============================================================ */
     #loginPage {
-      min-height: 100dvh;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-      position: relative;
-      overflow: hidden;
-      background-color: var(--army-dark);
+      min-height: 100dvh; width: 100%; display: flex; align-items: center; justify-content: center;
+      padding: 24px 16px; position: relative; overflow: hidden; background-color: var(--army-dark);
       background-image:
         radial-gradient(ellipse 220px 150px at 8% 15%,  var(--army-olive) 42%, transparent 43%),
         radial-gradient(ellipse 260px 190px at 78% 8%,  var(--army-dark)  40%, transparent 41%),
@@ -56,80 +43,25 @@
         radial-gradient(ellipse 280px 200px at 15% 88%, var(--army-primary) 38%, transparent 39%),
         radial-gradient(ellipse 190px 130px at 60% 95%, var(--army-dark)  40%, transparent 41%),
         radial-gradient(ellipse 230px 160px at 100% 30%, var(--army-olive) 40%, transparent 41%);
-      background-repeat: repeat;
-      background-size: 620px 620px;
+      background-repeat: repeat; background-size: 620px 620px;
     }
     #loginPage::before {
-      content: "";
-      position: absolute; inset: 0;
+      content: ""; position: absolute; inset: 0;
       background: linear-gradient(180deg, rgba(20,24,10,0.55) 0%, rgba(20,24,10,0.35) 45%, rgba(20,24,10,0.65) 100%);
       pointer-events: none;
     }
-
     .login-container { max-width: 420px; width: 100%; position: relative; z-index: 2; }
-
-    .brand-tag {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      margin-bottom: 22px;
-    }
+    .brand-tag { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 22px; }
     .brand-tag svg { flex-shrink: 0; }
     .brand-tag-text { color: var(--army-tan); font-family: var(--font-display); font-size: 0.78rem; letter-spacing: 3px; text-transform: uppercase; opacity: 0.85; }
-
-    .card-login {
-      border: 1px solid rgba(201, 189, 145, 0.25);
-      border-radius: 18px;
-      background: rgba(250, 251, 247, 0.97);
-      backdrop-filter: blur(6px);
-      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
-    }
-
-    .login-header {
-      font-family: var(--font-display);
-      color: var(--army-dark);
-      font-weight: 700;
-      letter-spacing: 2px;
-      font-size: 1.9rem;
-      text-transform: uppercase;
-    }
+    .card-login { border: 1px solid rgba(201, 189, 145, 0.25); border-radius: 18px; background: rgba(250, 251, 247, 0.97); backdrop-filter: blur(6px); box-shadow: 0 25px 60px rgba(0,0,0,0.35); }
+    .login-header { font-family: var(--font-display); color: var(--army-dark); font-weight: 700; letter-spacing: 2px; font-size: 1.9rem; text-transform: uppercase; }
     .login-sub { letter-spacing: 0.5px; }
-
-    .form-control, .form-select {
-      border-radius: 10px;
-      border: 1.5px solid #E1E5DC;
-      padding: 12px 16px;
-      transition: var(--transition-smooth);
-      font-size: 1rem;
-      font-family: var(--font-body);
-    }
-    .form-control:focus, .form-select:focus {
-      border-color: var(--army-primary);
-      box-shadow: 0 0 0 4px rgba(76, 94, 50, 0.15);
-    }
-    label.form-label {
-      font-family: var(--font-display);
-      letter-spacing: 1px;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      color: var(--army-primary) !important;
-    }
-    .btn-army {
-      background-color: var(--army-primary);
-      color: white;
-      border: none;
-      font-family: var(--font-display);
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      border-radius: 10px;
-      padding: 14px;
-      text-transform: uppercase;
-      transition: var(--transition-smooth);
-    }
-    .btn-army:hover {
-      background-color: var(--army-dark);
-      color: white;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(47, 58, 26, 0.35);
-    }
+    .form-control, .form-select { border-radius: 10px; border: 1.5px solid #E1E5DC; padding: 12px 16px; transition: var(--transition-smooth); font-size: 1rem; font-family: var(--font-body); }
+    .form-control:focus, .form-select:focus { border-color: var(--army-primary); box-shadow: 0 0 0 4px rgba(76, 94, 50, 0.15); }
+    label.form-label { font-family: var(--font-display); letter-spacing: 1px; font-size: 0.78rem; text-transform: uppercase; color: var(--army-primary) !important; }
+    .btn-army { background-color: var(--army-primary); color: white; border: none; font-family: var(--font-display); font-weight: 600; letter-spacing: 1.5px; border-radius: 10px; padding: 14px; text-transform: uppercase; transition: var(--transition-smooth); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-army:hover { background-color: var(--army-dark); color: white; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(47, 58, 26, 0.35); }
     .btn-army:active { transform: translateY(0); }
     .btn-army:disabled { opacity: 0.7; transform: none; box-shadow: none; }
 
@@ -140,7 +72,7 @@
 
     .app-header {
       background: white; border-radius: 18px; box-shadow: var(--card-shadow);
-      padding: 20px 24px; margin-bottom: 20px;
+      padding: 18px 24px; margin-bottom: 18px;
       display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
       position: relative; overflow: hidden;
     }
@@ -150,99 +82,80 @@
         var(--army-dark) 0 26px, var(--army-olive) 26px 48px,
         var(--army-khaki) 48px 66px, var(--army-tan) 66px 90px);
     }
-    .welcome-name { font-family: var(--font-display); font-size: 1.15rem; margin: 0; color: var(--army-dark); }
-    .badge-role {
-      background-color: var(--army-primary); font-family: var(--font-display);
-      letter-spacing: 1px; font-size: 0.72rem; padding: 6px 14px;
+    .header-user-info { display: flex; align-items: center; gap: 14px; }
+    .avatar-circle {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--army-primary), var(--army-dark));
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(47,58,26,0.3);
     }
-    .btn-logout {
-      border-radius: 10px; font-family: var(--font-display); letter-spacing: 1px;
-      font-weight: 600; padding: 10px 20px;
-    }
+    .welcome-name { font-family: var(--font-display); font-size: 1.1rem; margin: 0; color: var(--army-dark); }
+    .badge-role { font-family: var(--font-display); letter-spacing: 1px; font-size: 0.7rem; padding: 5px 13px; }
+    .badge-role-admin { background-color: var(--brass) !important; }
+    .badge-role-user { background-color: var(--army-khaki) !important; color: var(--text-dark) !important; }
+    .btn-logout { border-radius: 10px; font-family: var(--font-display); letter-spacing: 1px; font-weight: 600; padding: 10px 20px; display: inline-flex; align-items: center; gap: 6px; }
 
-    .filter-card {
-      background: white; padding: 20px; border-radius: 18px; border: none;
-      margin-bottom: 18px; box-shadow: var(--card-shadow);
+    /* --- Tab navigasi --- */
+    .nav-tab-army { display: flex; gap: 8px; padding: 0; margin: 0 0 18px; list-style: none; flex-wrap: wrap; }
+    .nav-tab-army .tab-link {
+      border: none; border-radius: 999px; padding: 10px 20px; font-family: var(--font-display);
+      letter-spacing: 1px; font-size: 0.82rem; color: var(--army-primary); background: white;
+      box-shadow: var(--card-shadow); transition: var(--transition-smooth);
+      display: inline-flex; align-items: center; gap: 8px; text-transform: uppercase;
     }
+    .nav-tab-army .tab-link.active { background: var(--army-primary); color: white; box-shadow: 0 6px 16px rgba(76,94,50,0.3); }
+    .nav-tab-army .tab-link:not(.active):hover { background: #eef0e9; }
+
+    .filter-card { background: white; padding: 20px; border-radius: 18px; border: none; margin-bottom: 18px; box-shadow: var(--card-shadow); }
     .filter-card .form-label { color: var(--army-primary); font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
-
-    .table-responsive {
-      background: white; padding: 8px; border-radius: 18px; border: none;
-      box-shadow: var(--card-shadow); overflow-x: auto;
-    }
+    .table-responsive { background: white; padding: 8px; border-radius: 18px; border: none; box-shadow: var(--card-shadow); overflow-x: auto; transition: var(--transition-smooth); }
+    .table-responsive:hover { box-shadow: var(--card-shadow-hover); }
     .table { margin-bottom: 0; vertical-align: middle; }
     .table-dark { background-color: var(--army-dark); color: white; border: none; }
     .table th { font-family: var(--font-display); font-weight: 500; letter-spacing: 1px; font-size: 0.8rem; padding: 14px 15px; text-transform: uppercase; }
     .table td { padding: 14px 15px; font-size: 0.95rem; }
+    .table tbody tr { transition: var(--transition-smooth); }
+    .table-hover tbody tr:hover { background-color: #f6f7f2; }
+
+    .btn-icon-sm { padding: 7px 11px; border-radius: 8px; font-size: 0.85rem; line-height: 1; }
+
+    .password-cell { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+    .password-cell .btn-eye { background: none; border: none; color: var(--army-primary); padding: 2px 4px; cursor: pointer; font-size: 1rem; transition: var(--transition-smooth); }
+    .password-cell .btn-eye:hover { color: var(--army-dark); transform: scale(1.1); }
 
     @media (max-width: 767.98px) {
       .table thead { display: none; }
       .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
-      .table tr {
-        margin-bottom: 14px; border: 1px solid #E9ECE4; border-radius: 14px;
-        padding: 6px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      }
-      .table td {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 10px 2px; border-bottom: 1px dashed #EEF0E9; text-align: right;
-      }
+      .table tr { margin-bottom: 14px; border: 1px solid #E9ECE4; border-radius: 14px; padding: 6px 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+      .table td { display: flex; justify-content: space-between; align-items: center; padding: 10px 2px; border-bottom: 1px dashed #EEF0E9; text-align: right; }
       .table td:last-child { border-bottom: none; padding-top: 12px; }
-      .table td::before {
-        content: attr(data-label); font-family: var(--font-display);
-        letter-spacing: 0.5px; font-size: 0.72rem; text-transform: uppercase;
-        color: var(--army-primary); text-align: left;
-      }
+      .table td::before { content: attr(data-label); font-family: var(--font-display); letter-spacing: 0.5px; font-size: 0.72rem; text-transform: uppercase; color: var(--army-primary); text-align: left; }
       .table td[data-label="Aksi"] { justify-content: center; }
       .table td[data-label="Aksi"]::before { display: none; }
+      .password-cell { justify-content: flex-end; }
     }
 
     #slipGajiContainer { position: relative; overflow: hidden; background: white; min-height: 850px; }
     #slipGajiContent { font-family: 'Courier New', monospace; color: black; padding: 40px; position: relative; z-index: 2; font-size: 13px; }
-
-    @media (max-width: 575.98px) {
-      #slipGajiContent { padding: 20px 16px; font-size: 11.5px; }
-    }
-
-    .watermark-bg {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      display: flex; flex-wrap: wrap; justify-content: center; align-content: center;
-      opacity: 0.06; transform: rotate(-30deg); pointer-events: none; z-index: 1;
-    }
+    @media (max-width: 575.98px) { #slipGajiContent { padding: 20px 16px; font-size: 11.5px; } }
+    .watermark-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; opacity: 0.06; transform: rotate(-30deg); pointer-events: none; z-index: 1; }
     .watermark-text { font-size: 28px; font-weight: bold; color: #000; margin: 30px; white-space: nowrap; }
-
     .pdf-header { text-align: center; font-weight: bold; font-size: 1.4rem; border-bottom: 2px solid black; margin-bottom: 20px; padding-bottom: 5px; }
     .pdf-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
     .pdf-label-group { display: flex; flex: 1; }
     .pdf-no { width: 30px; }
     .pdf-money { width: 160px; text-align: right; display: flex; justify-content: space-between; }
 
-    #loadingOverlay {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(244, 246, 240, 0.9); backdrop-filter: blur(8px); z-index: 9999;
-      flex-direction: column; align-items: center; justify-content: center;
-    }
+    #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 246, 240, 0.9); backdrop-filter: blur(8px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
     #loadingOverlay span { font-family: var(--font-display); }
-
     .password-container { position: relative; }
-    .toggle-password {
-      position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-      cursor: pointer; color: var(--army-primary); z-index: 10; transition: var(--transition-smooth);
-      padding: 6px;
-    }
+    .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--army-primary); z-index: 10; transition: var(--transition-smooth); padding: 6px; }
     .toggle-password:hover { color: var(--army-dark); }
-
-    .modal-header .modal-title { font-family: var(--font-display); letter-spacing: 1px; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 575.98px) {
-      .btn { padding-top: 10px; padding-bottom: 10px; }
-      .app-header { padding: 16px 18px; }
-      .welcome-name { font-size: 1rem; }
-    }
+    .modal-content { border-radius: 18px; overflow: hidden; }
+    .modal-header .modal-title { font-family: var(--font-display); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 575.98px) { .btn { padding-top: 10px; padding-bottom: 10px; } .app-header { padding: 16px 18px; } .welcome-name { font-size: 1rem; } }
   </style>
 </head>
 <body>
@@ -276,15 +189,12 @@
         <div class="password-container">
           <input type="password" id="pass" class="form-control form-control-lg" placeholder="Masukkan Password" autocomplete="current-password">
           <span class="toggle-password" onclick="togglePasswordVisibility('pass', this)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-              <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
-            </svg>
+            <i class="bi bi-eye"></i>
           </span>
         </div>
       </div>
 
-      <button class="btn btn-army w-100 mb-3" id="btnLogin" onclick="handleLogin()">Masuk Sistem</button>
+      <button class="btn btn-army w-100 mb-3" id="btnLogin" onclick="handleLogin()"><i class="bi bi-box-arrow-in-right"></i> Masuk Sistem</button>
 
       <div class="text-center mt-3 small">
         <a href="javascript:void(0)" onclick="alert('Silakan hubungi Juru Bayar')" class="text-danger fw-bold text-decoration-none">Lupa Password?</a>
@@ -297,50 +207,87 @@
 
 <div id="dashboardPage" class="dashboard-container">
   <div class="app-header">
-    <div>
-      <h4 id="welcomeMsg" class="welcome-name">Halo</h4>
-      <span class="badge px-3 py-2 rounded-pill badge-role" id="userRole"></span>
-    </div>
-    <button class="btn btn-outline-danger btn-logout" onclick="handleLogoutUser()">Logout</button>
-  </div>
-
-  <div class="filter-card">
-    <div class="row g-3">
-      <div class="col-6 col-md-4">
-        <label class="form-label fw-bold small">Filter Bulan</label>
-        <select id="filterBulan" class="form-select" onchange="applyFilters()">
-          <option value="">Semua Bulan</option>
-          <option value="Januari">Januari</option><option value="Februari">Februari</option>
-          <option value="Maret">Maret</option><option value="April">April</option>
-          <option value="Mei">Mei</option><option value="Juni">Juni</option>
-          <option value="Juli">Juli</option><option value="Agustus">Agustus</option>
-          <option value="September">September</option><option value="Oktober">Oktober</option>
-          <option value="November">November</option><option value="Desember">Desember</option>
-        </select>
-      </div>
-      <div class="col-6 col-md-4">
-        <label class="form-label fw-bold small">Filter Tahun</label>
-        <select id="filterTahun" class="form-select" onchange="applyFilters()">
-          <option value="">Semua Tahun</option>
-          <option value="2026">2026</option><option value="2027">2027</option>
-          <option value="2028">2028</option><option value="2029">2029</option>
-        </select>
-      </div>
-      <div class="col-12 col-md-4 d-flex align-items-end">
-        <button class="btn btn-light border w-100 fw-bold py-2" style="border-radius:10px; transition: var(--transition-smooth);" onclick="resetFilters()">Reset Filter</button>
+    <div class="header-user-info">
+      <div class="avatar-circle" id="userAvatar">?</div>
+      <div>
+        <h4 id="welcomeMsg" class="welcome-name">Halo</h4>
+        <span class="badge px-3 py-2 rounded-pill badge-role" id="userRole"></span>
       </div>
     </div>
+    <button class="btn btn-outline-danger btn-logout" onclick="handleLogoutUser()"><i class="bi bi-box-arrow-right"></i> Logout</button>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-hover">
-      <thead class="table-dark text-uppercase">
-        <tr>
-          <th class="rounded-start-3">Bulan</th><th>Tahun</th><th>Nama</th><th>Pangkat</th><th>NRP/NIP</th><th class="text-center rounded-end-3">Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
+  <ul class="nav-tab-army" id="mainTabs">
+    <li><button type="button" class="tab-link active" data-tab="slip" onclick="switchTab('slip')"><i class="bi bi-cash-stack"></i> Slip Gaji</button></li>
+    <li id="tabUserMgmtItem" style="display:none;"><button type="button" class="tab-link" data-tab="users" onclick="switchTab('users')"><i class="bi bi-people-fill"></i> Manajemen User</button></li>
+  </ul>
+
+  <!-- TAB: SLIP GAJI -->
+  <div id="tabSlip">
+    <div class="filter-card">
+      <div class="row g-3">
+        <div class="col-6 col-md-4">
+          <label class="form-label fw-bold small">Filter Bulan</label>
+          <select id="filterBulan" class="form-select" onchange="applyFilters()">
+            <option value="">Semua Bulan</option>
+            <option value="Januari">Januari</option><option value="Februari">Februari</option>
+            <option value="Maret">Maret</option><option value="April">April</option>
+            <option value="Mei">Mei</option><option value="Juni">Juni</option>
+            <option value="Juli">Juli</option><option value="Agustus">Agustus</option>
+            <option value="September">September</option><option value="Oktober">Oktober</option>
+            <option value="November">November</option><option value="Desember">Desember</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-4">
+          <label class="form-label fw-bold small">Filter Tahun</label>
+          <select id="filterTahun" class="form-select" onchange="applyFilters()">
+            <option value="">Semua Tahun</option>
+            <option value="2026">2026</option><option value="2027">2027</option>
+            <option value="2028">2028</option><option value="2029">2029</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-4 d-flex align-items-end">
+          <button class="btn btn-light border w-100 fw-bold py-2" style="border-radius:10px; transition: var(--transition-smooth);" onclick="resetFilters()"><i class="bi bi-arrow-counterclockwise"></i> Reset Filter</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-dark text-uppercase">
+          <tr>
+            <th class="rounded-start-3">Bulan</th><th>Tahun</th><th>Nama</th><th>Pangkat</th><th>NRP/NIP</th><th class="text-center rounded-end-3">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB: MANAJEMEN USER (ADMIN) -->
+  <div id="tabUsers" style="display:none;">
+    <div class="filter-card">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-8">
+          <label class="form-label fw-bold small">Cari User (NRP / Nama)</label>
+          <input type="text" id="searchUser" class="form-control" placeholder="Ketik NRP atau nama..." oninput="applyUserFilter()">
+        </div>
+        <div class="col-12 col-md-4">
+          <button class="btn btn-army w-100" onclick="loadUsers()"><i class="bi bi-arrow-clockwise"></i> Muat Ulang</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-dark text-uppercase">
+          <tr>
+            <th class="rounded-start-3">NRP/NIP</th><th>Nama</th><th>Role</th><th class="text-end">Password</th><th class="text-center rounded-end-3">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBody"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -348,7 +295,7 @@
   <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down">
     <div class="modal-content border-0 rounded-4 shadow">
       <div class="modal-header bg-dark text-white border-0 py-3">
-        <h5 class="modal-title fw-bold small" style="letter-spacing:1px;">Rincian Slip Gaji</h5>
+        <h5 class="modal-title fw-bold small" style="letter-spacing:1px;"><i class="bi bi-receipt"></i> Rincian Slip Gaji</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body p-0">
@@ -358,7 +305,7 @@
         </div>
       </div>
       <div class="modal-footer border-0 bg-light">
-        <button type="button" class="btn btn-danger px-4 fw-bold rounded-3 w-100 w-sm-auto" onclick="downloadPDF()">Download PDF</button>
+        <button type="button" class="btn btn-danger px-4 fw-bold rounded-3 w-100 w-sm-auto" onclick="downloadPDF()"><i class="bi bi-download"></i> Download PDF</button>
       </div>
     </div>
   </div>
@@ -368,7 +315,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 rounded-4 shadow">
       <div class="modal-header text-white border-0 py-3" style="background-color: var(--army-primary);">
-        <h5 class="fw-bold mb-0" style="font-family: var(--font-display); letter-spacing:1px;">Pendaftaran E-SIPAG</h5>
+        <h5 class="fw-bold mb-0" style="font-family: var(--font-display); letter-spacing:1px;"><i class="bi bi-person-plus-fill"></i> Pendaftaran E-SIPAG</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body p-4">
@@ -378,15 +325,40 @@
           <label class="form-label fw-bold small">Password Baru</label>
           <div class="password-container">
             <input type="password" id="regPass" class="form-control">
-            <span class="toggle-password" onclick="togglePasswordVisibility('regPass', this)">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
-                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
-              </svg>
-            </span>
+            <span class="toggle-password" onclick="togglePasswordVisibility('regPass', this)"><i class="bi bi-eye"></i></span>
           </div>
         </div>
-        <button class="btn btn-army w-100" onclick="handleSignup()">Daftar Sekarang</button>
+        <button class="btn btn-army w-100" onclick="handleSignup()"><i class="bi bi-check2-circle"></i> Daftar Sekarang</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editUserModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header text-white border-0 py-3" style="background-color: var(--army-primary);">
+        <h5 class="fw-bold mb-0" style="font-family: var(--font-display); letter-spacing:1px;"><i class="bi bi-pencil-square"></i> Edit User</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <input type="hidden" id="editOriginalNrp">
+        <div class="mb-3"><label class="form-label fw-bold small">NRP / NIP</label><input type="text" id="editNrp" class="form-control"></div>
+        <div class="mb-3"><label class="form-label fw-bold small">Nama Lengkap</label><input type="text" id="editNama" class="form-control"></div>
+        <div class="mb-3">
+          <label class="form-label fw-bold small">Password</label>
+          <div class="password-container">
+            <input type="text" id="editPass" class="form-control">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label fw-bold small">Role</label>
+          <select id="editRole" class="form-select">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <button class="btn btn-army w-100" onclick="submitEditUser()"><i class="bi bi-save"></i> Simpan Perubahan</button>
       </div>
     </div>
   </div>
@@ -397,18 +369,17 @@
   // URL Web App Apps Script (deploy ulang setelah edit Code.gs supaya URL ini tetap valid)
   const API_URL = "https://script.google.com/macros/s/AKfycbxsdnS8n5Tul7xzccgwlI8SSTwVeiBCYaxS6zzhAzDFRh2A0dupQaREczQyR1K9d55BYg/exec";
 
-  console.log("E-SIPAG index.html — versi kolom H-T fix urutan potongan (2026-08-29)");
+  console.log("E-SIPAG index.html (Vercel mode, fetch API) — Menu Admin + tema modern — 2026-08-29");
 
   let rawDataGaji = [];
-  let currentUser = { nrp: "", nama: "" };
+  let rawUsersData = [];
+  let currentUser = { nrp: "", nama: "", role: "" };
   let currentPeriode = "";
 
   function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
   function formatIndo(a) { return (a === "" || a == null || a === 0 || a === "-") ? "0" : parseFloat(a).toLocaleString('id-ID'); }
 
-  // Pengganti google.script.run: panggil Apps Script Web App sebagai API JSON.
-  // body dikirim sebagai string biasa (text/plain) supaya request tetap "simple request"
-  // dan tidak kena preflight OPTIONS, yang tidak didukung Apps Script.
+  // Panggil Apps Script Web App sebagai API JSON.
   function callApi(action, payload) {
     payload = payload || {};
     return fetch(API_URL, {
@@ -422,15 +393,25 @@
 
   function togglePasswordVisibility(inputId, iconElement) {
     const passwordInput = document.getElementById(inputId);
+    const icon = iconElement.querySelector('i');
     if (passwordInput.type === "password") {
       passwordInput.type = "text";
-      iconElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/><path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/><path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8q.086.13.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/></svg>';
+      icon.className = "bi bi-eye-slash";
     } else {
       passwordInput.type = "password";
-      iconElement.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>';
+      icon.className = "bi bi-eye";
     }
   }
 
+  /* ===================== TAB SWITCHING ===================== */
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-link').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+    document.getElementById('tabSlip').style.display = tab === 'slip' ? 'block' : 'none';
+    document.getElementById('tabUsers').style.display = tab === 'users' ? 'block' : 'none';
+    if (tab === 'users' && currentUser.role === 'admin') loadUsers();
+  }
+
+  /* ===================== LOGIN / LOGOUT ===================== */
   function handleLogin() {
     const nrp = document.getElementById('nrp').value;
     const pass = document.getElementById('pass').value;
@@ -440,11 +421,16 @@
       .then(res => {
         toggleLoading(false);
         if(res.status === "success") {
-          currentUser = { nrp: res.nrp, nama: res.nama };
+          currentUser = { nrp: res.nrp, nama: res.nama, role: res.role };
           document.getElementById('loginPage').style.display = 'none';
           document.getElementById('dashboardPage').style.display = 'block';
           document.getElementById('welcomeMsg').innerText = "Halo, " + res.nama;
-          document.getElementById('userRole').innerText = res.role.toUpperCase();
+          document.getElementById('userAvatar').innerText = (res.nama || "?").trim().charAt(0).toUpperCase();
+          const roleBadge = document.getElementById('userRole');
+          roleBadge.innerText = res.role.toUpperCase();
+          roleBadge.className = 'badge px-3 py-2 rounded-pill badge-role ' + (res.role === 'admin' ? 'badge-role-admin' : 'badge-role-user');
+          document.getElementById('tabUserMgmtItem').style.display = (res.role === 'admin') ? 'block' : 'none';
+          switchTab('slip');
           loadData(res.nrp, res.role);
         } else {
           alert(res.message || "NRP atau Password salah!");
@@ -452,17 +438,31 @@
       })
       .catch(err => {
         toggleLoading(false);
-        alert("Gagal terhubung ke server: " + err.message);
+        alert("Gagal terhubung ke server: " + (err.message || err));
       });
   }
 
+  function handleLogoutUser() {
+    currentUser = { nrp: "", nama: "", role: "" };
+    rawDataGaji = [];
+    rawUsersData = [];
+    currentPeriode = "";
+    document.getElementById('nrp').value = "";
+    document.getElementById('pass').value = "";
+    document.getElementById('tabUserMgmtItem').style.display = 'none';
+    switchTab('slip');
+    document.getElementById('dashboardPage').style.display = 'none';
+    document.getElementById('loginPage').style.display = 'flex';
+  }
+
+  /* ===================== SLIP GAJI ===================== */
   function loadData(nrp, role) {
     callApi('getGajiData', { nrp: nrp, role: role })
       .then(data => {
         rawDataGaji = data.rows || [];
         renderTable(rawDataGaji);
       })
-      .catch(err => alert("Gagal memuat data gaji: " + err.message));
+      .catch(err => alert("Gagal memuat data gaji: " + (err.message || err)));
   }
 
   function renderTable(rows) {
@@ -476,7 +476,7 @@
           <td data-label="Nama" class="fw-semibold">${row[3]}</td>
           <td data-label="Pangkat">${row[4]}</td>
           <td data-label="NRP/NIP"><span class="badge bg-light text-dark font-monospace border">${row[5]}</span></td>
-          <td data-label="Aksi" class="text-center"><button class="btn btn-sm btn-army px-3" onclick="showDetail(${originalIndex})">Detail</button></td>
+          <td data-label="Aksi" class="text-center"><button class="btn btn-sm btn-army px-3" onclick="showDetail(${originalIndex})"><i class="bi bi-eye"></i> Detail</button></td>
         </tr>
       `;
     }).join('') || "<tr><td colspan='6' class='text-center text-muted py-4'>Data Tidak Ditemukan</td></tr>";
@@ -505,9 +505,8 @@
 
     document.getElementById('watermarkArea').innerHTML = Array(15).fill(`<div class="watermark-text">${data[5]}</div>`).join('');
     callApi('logAktivitasUser', { nrp: currentUser.nrp, nama: currentUser.nama, aksi: "LIHAT DETAIL", periode: currentPeriode })
-      .catch(err => console.log("Gagal mencatat log:", err.message));
+      .catch(err => console.log("Gagal mencatat log:", err.message || err));
 
-    // KOREKSI MAP INDEKS: Berdasarkan Kolom A sampai T (Indeks 0 hingga 19)
     // H=7 TWP | I=8 BRI Sampangan | J=9 BRI Pandanaran | K=10 BPD Syariah | L=11 BRI Watugong
     // M=12 BPD Jateng | N=13 BTN | O=14 Mandiri | P=15 Persit | Q=16 Primkopad | R=17 Arisan KORPRI
     // S=18 Jumlah Potongan | T=19 Jumlah Diterima (THP)
@@ -565,7 +564,7 @@
 
   function downloadPDF() {
     callApi('logAktivitasUser', { nrp: currentUser.nrp, nama: currentUser.nama, aksi: "DOWNLOAD PDF", periode: currentPeriode })
-      .catch(err => console.log("Gagal mencatat log:", err.message));
+      .catch(err => console.log("Gagal mencatat log:", err.message || err));
     const element = document.getElementById('slipGajiContainer');
     const opt = {
       margin: 10, filename: `Slip_${currentUser.nrp}_${currentPeriode}.pdf`,
@@ -586,28 +585,118 @@
     callApi('registerUser', payload)
       .then(res => {
         toggleLoading(false);
-        alert(res.message || res);
+        alert(res.message || "Selesai.");
         const modal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
         if (modal) modal.hide();
         document.getElementById('nrp').value = regNrp;
       })
       .catch(err => {
         toggleLoading(false);
-        alert("Gagal mendaftar: " + err.message);
+        alert("Gagal mendaftar: " + (err.message || err));
       });
   }
 
-  // Logout tanpa reload total
-  function handleLogoutUser() {
-    currentUser = { nrp: "", nama: "" };
-    rawDataGaji = [];
-    currentPeriode = "";
+  /* ===================== MANAJEMEN USER (ADMIN) ===================== */
+  function loadUsers() {
+    callApi('getAllUsers', { role: currentUser.role })
+      .then(res => {
+        if (res.status !== 'success') { alert(res.message || 'Gagal memuat data user.'); return; }
+        rawUsersData = res.rows || [];
+        document.getElementById('searchUser').value = '';
+        renderUsersTable(rawUsersData);
+      })
+      .catch(err => alert('Gagal memuat data user: ' + (err.message || err)));
+  }
 
-    document.getElementById('nrp').value = "";
-    document.getElementById('pass').value = "";
+  function renderUsersTable(rows) {
+    const tbody = document.getElementById('userTableBody');
+    tbody.innerHTML = rows.map((u) => {
+      const i = rawUsersData.indexOf(u);
+      const passEscaped = u.pass.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+      const namaEscaped = u.nama.replace(/'/g, "\\'");
+      return `
+        <tr>
+          <td data-label="NRP/NIP"><span class="badge bg-light text-dark font-monospace border">${u.nrp}</span></td>
+          <td data-label="Nama" class="fw-semibold">${u.nama}</td>
+          <td data-label="Role"><span class="badge rounded-pill ${u.role === 'admin' ? 'badge-role-admin' : 'badge-role-user'}">${u.role.toUpperCase()}</span></td>
+          <td data-label="Password">
+            <div class="password-cell">
+              <span class="font-monospace" id="passText_${i}">••••••••</span>
+              <button type="button" class="btn-eye" onclick="togglePasswordCell(${i}, '${passEscaped}')"><i class="bi bi-eye" id="eyeIcon_${i}"></i></button>
+            </div>
+          </td>
+          <td data-label="Aksi" class="text-center">
+            <button class="btn btn-sm btn-army btn-icon-sm me-1" onclick="openEditUser(${i})"><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-sm btn-outline-danger btn-icon-sm" onclick="deleteUserConfirm('${u.nrp}', '${namaEscaped}')"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      `;
+    }).join('') || "<tr><td colspan='5' class='text-center text-muted py-4'>Tidak Ada User</td></tr>";
+  }
 
-    document.getElementById('dashboardPage').style.display = 'none';
-    document.getElementById('loginPage').style.display = 'flex';
+  function togglePasswordCell(i, pass) {
+    const span = document.getElementById('passText_' + i);
+    const icon = document.getElementById('eyeIcon_' + i);
+    if (span.innerText === '••••••••') {
+      span.innerText = pass;
+      icon.className = 'bi bi-eye-slash';
+    } else {
+      span.innerText = '••••••••';
+      icon.className = 'bi bi-eye';
+    }
+  }
+
+  function applyUserFilter() {
+    const q = document.getElementById('searchUser').value.trim().toLowerCase();
+    const filtered = rawUsersData.filter(u => u.nrp.toLowerCase().includes(q) || u.nama.toLowerCase().includes(q));
+    renderUsersTable(filtered);
+  }
+
+  function openEditUser(i) {
+    const u = rawUsersData[i];
+    if (!u) return;
+    document.getElementById('editOriginalNrp').value = u.nrp;
+    document.getElementById('editNrp').value = u.nrp;
+    document.getElementById('editNama').value = u.nama;
+    document.getElementById('editPass').value = u.pass;
+    document.getElementById('editRole').value = u.role;
+    new bootstrap.Modal(document.getElementById('editUserModal')).show();
+  }
+
+  function submitEditUser() {
+    const payload = {
+      requesterRole: currentUser.role,
+      originalNrp: document.getElementById('editOriginalNrp').value,
+      nrp: document.getElementById('editNrp').value,
+      nama: document.getElementById('editNama').value,
+      pass: document.getElementById('editPass').value,
+      role: document.getElementById('editRole').value
+    };
+    if (!payload.nrp || !payload.nama || !payload.pass) return alert('Lengkapi semua data!');
+    toggleLoading(true);
+    callApi('updateUser', payload)
+      .then(res => {
+        toggleLoading(false);
+        alert(res.message || 'Selesai.');
+        if (res.status === 'success') {
+          const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+          if (modal) modal.hide();
+          loadUsers();
+        }
+      })
+      .catch(err => { toggleLoading(false); alert('Gagal menyimpan: ' + (err.message || err)); });
+  }
+
+  function deleteUserConfirm(nrp, nama) {
+    if (!confirm(`Hapus user "${nama}" (NRP ${nrp})? Tindakan ini tidak bisa dibatalkan.`)) return;
+    toggleLoading(true);
+    callApi('deleteUser', { nrp: nrp, requesterRole: currentUser.role })
+      .then(res => {
+        toggleLoading(false);
+        alert(res.message || 'Selesai.');
+        if (res.status === 'success') loadUsers();
+      })
+      .catch(err => { toggleLoading(false); alert('Gagal menghapus: ' + (err.message || err)); });
   }
 </script>
 </body>
