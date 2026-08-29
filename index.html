@@ -136,16 +136,26 @@
       .password-cell { justify-content: flex-end; }
     }
 
-    #slipGajiContainer { position: relative; overflow: hidden; background: white; min-height: 850px; }
-    #slipGajiContent { font-family: 'Courier New', monospace; color: black; padding: 40px; position: relative; z-index: 2; font-size: 13px; }
-    @media (max-width: 575.98px) { #slipGajiContent { padding: 20px 16px; font-size: 11.5px; } }
-    .watermark-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; opacity: 0.06; transform: rotate(-30deg); pointer-events: none; z-index: 1; }
-    .watermark-text { font-size: 28px; font-weight: bold; color: #000; margin: 30px; white-space: nowrap; }
-    .pdf-header { text-align: center; font-weight: bold; font-size: 1.4rem; border-bottom: 2px solid black; margin-bottom: 20px; padding-bottom: 5px; }
+    #slipGajiContainer { position: relative; overflow: hidden; background: var(--army-bg); min-height: 850px; }
+    #slipGajiContainer::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 8px; z-index: 3;
+      background: repeating-linear-gradient(100deg,
+        var(--army-dark) 0 26px, var(--army-olive) 26px 48px,
+        var(--army-khaki) 48px 66px, var(--army-tan) 66px 90px);
+    }
+    #slipGajiContent { font-family: 'Courier New', monospace; color: var(--text-dark); padding: 40px; padding-top: 32px; position: relative; z-index: 2; font-size: 13px; }
+    @media (max-width: 575.98px) { #slipGajiContent { padding: 20px 16px; padding-top: 24px; font-size: 11.5px; } }
+    .watermark-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; opacity: 0.05; transform: rotate(-30deg); pointer-events: none; z-index: 1; }
+    .watermark-text { font-size: 28px; font-weight: bold; color: var(--army-primary); margin: 30px; white-space: nowrap; }
+    .pdf-header { text-align: center; font-weight: bold; font-size: 1.4rem; color: var(--army-dark); border-bottom: 3px solid var(--army-primary); margin-bottom: 20px; padding-bottom: 8px; font-family: var(--font-display); letter-spacing: 2px; }
+    .slip-info-box { background: white; border: 1px solid var(--army-tan); border-left: 4px solid var(--army-primary); border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; }
     .pdf-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
     .pdf-label-group { display: flex; flex: 1; }
-    .pdf-no { width: 30px; }
+    .pdf-no { width: 30px; color: var(--army-primary); font-weight: bold; }
     .pdf-money { width: 160px; text-align: right; display: flex; justify-content: space-between; }
+    .pdf-row-total { border-top: 1px dashed var(--army-khaki); margin-top: 6px; padding-top: 6px; font-weight: bold; color: var(--army-dark); }
+    .pdf-row-thp { background: var(--army-primary); color: white; border-radius: 8px; padding: 12px 16px; margin-top: 10px; font-weight: bold; font-size: 1.1rem; box-shadow: 0 6px 16px rgba(76,94,50,0.3); }
+    .slip-sign-box { border-top: 2px dotted var(--army-khaki); padding-top: 4px; }
 
     #loadingOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(244, 246, 240, 0.9); backdrop-filter: blur(8px); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
     #loadingOverlay span { font-family: var(--font-display); }
@@ -156,9 +166,39 @@
     .modal-header .modal-title { font-family: var(--font-display); letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @media (max-width: 575.98px) { .btn { padding-top: 10px; padding-bottom: 10px; } .app-header { padding: 16px 18px; } .welcome-name { font-size: 1rem; } }
+
+    /* --- Welcome Toast --- */
+    .welcome-toast {
+      position: fixed; top: -140px; left: 50%; transform: translateX(-50%);
+      width: min(420px, calc(100% - 32px)); z-index: 10000;
+      background: linear-gradient(120deg, var(--army-dark), var(--army-primary) 65%, var(--army-olive));
+      color: white; border-radius: 16px; padding: 16px 18px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 16px 40px rgba(20,24,10,0.35);
+      transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: 1px solid rgba(201,189,145,0.3);
+    }
+    .welcome-toast.show { top: 20px; }
+    .welcome-toast-icon {
+      width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+    }
+    .welcome-toast-title { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; font-size: 1rem; }
+    .welcome-toast-sub { font-size: 0.82rem; opacity: 0.9; margin-top: 2px; }
+    .welcome-toast-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.1rem; padding: 4px; cursor: pointer; margin-left: auto; flex-shrink: 0; }
+    .welcome-toast-close:hover { color: white; }
   </style>
 </head>
 <body>
+
+<div id="welcomeToast" class="welcome-toast">
+  <div class="welcome-toast-icon"><i class="bi bi-emoji-smile-fill"></i></div>
+  <div>
+    <div class="welcome-toast-title" id="welcomeToastTitle">Halo!</div>
+    <div class="welcome-toast-sub" id="welcomeToastSub"></div>
+  </div>
+  <button type="button" class="welcome-toast-close" onclick="closeWelcomeToast()"><i class="bi bi-x-lg"></i></button>
+</div>
 
 <div id="loadingOverlay">
   <div class="spinner-border text-success" style="width: 3rem; height: 3rem; color: var(--army-primary) !important;" role="status"></div>
@@ -294,7 +334,7 @@
 <div class="modal fade" id="detailModal" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-sm-down">
     <div class="modal-content border-0 rounded-4 shadow">
-      <div class="modal-header bg-dark text-white border-0 py-3">
+      <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(120deg, var(--army-dark), var(--army-primary) 60%, var(--army-olive));">
         <h5 class="modal-title fw-bold small" style="letter-spacing:1px;"><i class="bi bi-receipt"></i> Rincian Slip Gaji</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
@@ -305,7 +345,7 @@
         </div>
       </div>
       <div class="modal-footer border-0 bg-light">
-        <button type="button" class="btn btn-danger px-4 fw-bold rounded-3 w-100 w-sm-auto" onclick="downloadPDF()"><i class="bi bi-download"></i> Download PDF</button>
+        <button type="button" class="btn px-4 fw-bold rounded-3 w-100 w-sm-auto text-white" style="background-color: var(--brass); border:none;" onclick="downloadPDF()"><i class="bi bi-download"></i> Download PDF</button>
       </div>
     </div>
   </div>
@@ -369,12 +409,13 @@
   // URL Web App Apps Script (deploy ulang setelah edit Code.gs supaya URL ini tetap valid)
   const API_URL = "https://script.google.com/macros/s/AKfycbxsdnS8n5Tul7xzccgwlI8SSTwVeiBCYaxS6zzhAzDFRh2A0dupQaREczQyR1K9d55BYg/exec";
 
-  console.log("E-SIPAG index.html (Vercel mode, fetch API) — Menu Admin + tema modern — 2026-08-29");
+  console.log("E-SIPAG index.html (Vercel mode, fetch API) — Slip camo theme + welcome toast — 2026-08-29");
 
   let rawDataGaji = [];
   let rawUsersData = [];
   let currentUser = { nrp: "", nama: "", role: "" };
   let currentPeriode = "";
+  let welcomeToastTimer = null;
 
   function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
   function formatIndo(a) { return (a === "" || a == null || a === 0 || a === "-") ? "0" : parseFloat(a).toLocaleString('id-ID'); }
@@ -401,6 +442,33 @@
       passwordInput.type = "password";
       icon.className = "bi bi-eye";
     }
+  }
+
+  /* ===================== WELCOME TOAST ===================== */
+  function showWelcomeToast(nama, role) {
+    const hour = new Date().getHours();
+    let greeting = "Selamat malam";
+    if (hour >= 4 && hour < 11) greeting = "Selamat pagi";
+    else if (hour >= 11 && hour < 15) greeting = "Selamat siang";
+    else if (hour >= 15 && hour < 18) greeting = "Selamat sore";
+
+    const firstName = (nama || "").trim().split(/\s+/)[0] || "Prajurit";
+    const subText = role === "admin"
+      ? "Selamat bertugas, Admin — semua data siap dipantau hari ini."
+      : "Selamat bertugas — slip gaji Anda sudah siap dilihat.";
+
+    document.getElementById('welcomeToastTitle').innerText = `${greeting}, ${firstName}! 👋`;
+    document.getElementById('welcomeToastSub').innerText = subText;
+
+    const toast = document.getElementById('welcomeToast');
+    toast.classList.add('show');
+    clearTimeout(welcomeToastTimer);
+    welcomeToastTimer = setTimeout(closeWelcomeToast, 5000);
+  }
+
+  function closeWelcomeToast() {
+    document.getElementById('welcomeToast').classList.remove('show');
+    clearTimeout(welcomeToastTimer);
   }
 
   /* ===================== TAB SWITCHING ===================== */
@@ -432,6 +500,7 @@
           document.getElementById('tabUserMgmtItem').style.display = (res.role === 'admin') ? 'block' : 'none';
           switchTab('slip');
           loadData(res.nrp, res.role);
+          showWelcomeToast(res.nama, res.role);
         } else {
           alert(res.message || "NRP atau Password salah!");
         }
@@ -443,6 +512,7 @@
   }
 
   function handleLogoutUser() {
+    closeWelcomeToast();
     currentUser = { nrp: "", nama: "", role: "" };
     rawDataGaji = [];
     rawUsersData = [];
@@ -512,7 +582,7 @@
     // S=18 Jumlah Potongan | T=19 Jumlah Diterima (THP)
     const slipHtml = `
       <div class="pdf-header">RINCIAN SLIP GAJI</div>
-      <div style="margin-bottom: 20px;">
+      <div class="slip-info-box">
         <table style="width: 100%;">
           <tr><td width="160">NAMA</td><td>: <b>${data[3]}</b></td></tr>
           <tr><td>PANGKAT / NRP</td><td>: ${data[4]} / ${data[5]}</td></tr>
@@ -520,12 +590,12 @@
         </table>
       </div>
 
-      <div class="pdf-row" style="font-weight:bold; border-top:2px solid black; padding-top:5px;">
+      <div class="pdf-row pdf-row-total">
         <span>GAJI BERSIH DIBAYARKAN</span>
         <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[6])}</span></div>
       </div>
 
-      <div style="margin-top:15px; font-weight:bold; text-decoration:underline;">RINCIAN POTONGAN</div>
+      <div style="margin-top:18px; margin-bottom:8px; font-weight:bold; color: var(--army-primary); text-decoration:underline; text-underline-offset:3px;">RINCIAN POTONGAN</div>
 
       <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">1.</span><span>TWP</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[7])}</span></div></div>
       <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">2.</span><span>Bank BRI Sampangan</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[8])}</span></div></div>
@@ -539,17 +609,17 @@
       <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">10.</span><span>Primkopad</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[16])}</span></div></div>
       <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">11.</span><span>Arisan KORPRI</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[17])}</span></div></div>
 
-      <div class="pdf-row" style="font-weight:bold; border-top:1px solid black; margin-top:5px;">
+      <div class="pdf-row pdf-row-total">
         <span>JUMLAH TOTAL POTONGAN</span>
         <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[18])}</span></div>
       </div>
 
-      <div class="pdf-row" style="font-weight:bold; border-top:2px solid black; padding-top:2px; font-size: 1.1rem;">
+      <div class="pdf-row pdf-row-thp">
         <span>JUMLAH DITERIMA (THP)</span>
         <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[19])}</span></div>
       </div>
 
-      <div style="margin-top:60px; float:right; text-align:center; width:250px;">
+      <div class="slip-sign-box" style="margin-top:60px; float:right; text-align:center; width:250px;">
         <div>Semarang, 1 ${bulanData} ${tahunData}</div>
         <div style="margin-top:5px;">BA JURU BAYAR</div>
         <div style="margin-top:75px;"><b><u>AGUS SUTINO</u></b></div>
