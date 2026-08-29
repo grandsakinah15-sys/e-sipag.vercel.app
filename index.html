@@ -397,6 +397,8 @@
   // URL Web App Apps Script (deploy ulang setelah edit Code.gs supaya URL ini tetap valid)
   const API_URL = "https://script.google.com/macros/s/AKfycbxsdnS8n5Tul7xzccgwlI8SSTwVeiBCYaxS6zzhAzDFRh2A0dupQaREczQyR1K9d55BYg/exec";
 
+  console.log("E-SIPAG index.html — versi kolom H-T fix urutan potongan (2026-08-29)");
+
   let rawDataGaji = [];
   let currentUser = { nrp: "", nama: "" };
   let currentPeriode = "";
@@ -505,7 +507,10 @@
     callApi('logAktivitasUser', { nrp: currentUser.nrp, nama: currentUser.nama, aksi: "LIHAT DETAIL", periode: currentPeriode })
       .catch(err => console.log("Gagal mencatat log:", err.message));
 
-    // KOREKSI MAP INDEKS: Berdasarkan Kolom A sampai S (Indeks 0 hingga 18)
+    // KOREKSI MAP INDEKS: Berdasarkan Kolom A sampai T (Indeks 0 hingga 19)
+    // H=7 TWP | I=8 BRI Sampangan | J=9 BRI Pandanaran | K=10 BPD Syariah | L=11 BRI Watugong
+    // M=12 BPD Jateng | N=13 BTN | O=14 Mandiri | P=15 Persit | Q=16 Primkopad | R=17 Arisan KORPRI
+    // S=18 Jumlah Potongan | T=19 Jumlah Diterima (THP)
     const slipHtml = `
       <div class="pdf-header">RINCIAN SLIP GAJI</div>
       <div style="margin-bottom: 20px;">
@@ -523,26 +528,26 @@
 
       <div style="margin-top:15px; font-weight:bold; text-decoration:underline;">RINCIAN POTONGAN</div>
 
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">1.</span><span>Potongan TWP</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[7])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">2.</span><span>BRI Sampangan</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[8])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">3.</span><span>BRI Pandanaran</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[9])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">4.</span><span>BPD Syariah</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[10])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">5.</span><span>BRI Watugong</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[11])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">6.</span><span>BPD Jateng</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[12])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">7.</span><span>Potongan BTN</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[13])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">1.</span><span>TWP</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[7])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">2.</span><span>Bank BRI Sampangan</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[8])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">3.</span><span>Bank BRI Pandanaran</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[9])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">4.</span><span>Bank BRI Watugong</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[11])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">5.</span><span>Bank BPD Syariah</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[10])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">6.</span><span>Bank BPD Jateng</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[12])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">7.</span><span>Bank BTN</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[13])}</span></div></div>
       <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">8.</span><span>Bank Mandiri</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[14])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">9.</span><span>Potongan Persit</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[15])}</span></div></div>
-      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">10.</span><span>Potongan Primkopad</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[16])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">9.</span><span>Persit</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[15])}</span></div></div>
+      <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">10.</span><span>Primkopad</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[16])}</span></div></div>
       <div class="pdf-row"><div class="pdf-label-group"><span class="pdf-no">11.</span><span>Arisan KORPRI</span></div><div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[17])}</span></div></div>
 
       <div class="pdf-row" style="font-weight:bold; border-top:1px solid black; margin-top:5px;">
         <span>JUMLAH TOTAL POTONGAN</span>
-        <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[17])}</span></div>
+        <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[18])}</span></div>
       </div>
 
       <div class="pdf-row" style="font-weight:bold; border-top:2px solid black; padding-top:2px; font-size: 1.1rem;">
         <span>JUMLAH DITERIMA (THP)</span>
-        <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[18])}</span></div>
+        <div class="pdf-money"><span>Rp.</span><span>${formatIndo(data[19])}</span></div>
       </div>
 
       <div style="margin-top:60px; float:right; text-align:center; width:250px;">
