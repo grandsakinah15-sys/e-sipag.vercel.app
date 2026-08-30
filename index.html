@@ -167,38 +167,28 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     @media (max-width: 575.98px) { .btn { padding-top: 10px; padding-bottom: 10px; } .app-header { padding: 16px 18px; } .welcome-name { font-size: 1rem; } }
 
-    /* --- Welcome Toast --- */
-    .welcome-toast {
-      position: fixed; top: -140px; left: 50%; transform: translateX(-50%);
-      width: min(420px, calc(100% - 32px)); z-index: 10000;
-      background: linear-gradient(120deg, var(--army-dark), var(--army-primary) 65%, var(--army-olive));
-      color: white; border-radius: 16px; padding: 16px 18px;
-      display: flex; align-items: center; gap: 14px;
-      box-shadow: 0 16px 40px rgba(20,24,10,0.35);
-      transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      border: 1px solid rgba(201,189,145,0.3);
+    /* --- Beranda --- */
+    .beranda-hero { margin-bottom: 18px; }
+    .beranda-hero-title { font-family: var(--font-display); color: var(--army-dark); font-size: 1.4rem; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .beranda-hero-sub { color: #6b7280; margin-bottom: 0; font-size: 0.92rem; }
+    .beranda-admin-stat {
+      background: linear-gradient(120deg, var(--army-dark), var(--army-primary));
+      color: white; border-radius: 12px; padding: 12px 18px; margin-bottom: 18px;
+      display: flex; align-items: center; font-size: 0.88rem; box-shadow: var(--card-shadow);
     }
-    .welcome-toast.show { top: 20px; }
-    .welcome-toast-icon {
-      width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.15);
-      display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+    .beranda-card {
+      background: white; border-radius: 16px; padding: 20px; box-shadow: var(--card-shadow);
+      border-top: 4px solid var(--army-primary); transition: var(--transition-smooth); height: 100%;
     }
-    .welcome-toast-title { font-family: var(--font-display); font-weight: 600; letter-spacing: 0.5px; font-size: 1rem; }
-    .welcome-toast-sub { font-size: 0.82rem; opacity: 0.9; margin-top: 2px; }
-    .welcome-toast-close { background: none; border: none; color: rgba(255,255,255,0.8); font-size: 1.1rem; padding: 4px; cursor: pointer; margin-left: auto; flex-shrink: 0; }
-    .welcome-toast-close:hover { color: white; }
+    .beranda-card:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgba(0,0,0,0.1); }
+    .beranda-card-period { font-family: var(--font-display); letter-spacing: 1px; text-transform: uppercase; color: var(--army-primary); font-size: 0.8rem; margin-bottom: 6px; }
+    .beranda-card-thp { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--army-dark); }
+    .beranda-card-label { font-size: 0.75rem; color: #8a8f83; margin-bottom: 14px; }
+    .beranda-card-detail-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 4px 0; border-top: 1px dashed #E9ECE4; }
+    .empty-state-card { background: white; border-radius: 16px; box-shadow: var(--card-shadow); }
   </style>
 </head>
 <body>
-
-<div id="welcomeToast" class="welcome-toast">
-  <div class="welcome-toast-icon"><i class="bi bi-emoji-smile-fill"></i></div>
-  <div>
-    <div class="welcome-toast-title" id="welcomeToastTitle">Halo!</div>
-    <div class="welcome-toast-sub" id="welcomeToastSub"></div>
-  </div>
-  <button type="button" class="welcome-toast-close" onclick="closeWelcomeToast()"><i class="bi bi-x-lg"></i></button>
-</div>
 
 <div id="loadingOverlay">
   <div class="spinner-border text-success" style="width: 3rem; height: 3rem; color: var(--army-primary) !important;" role="status"></div>
@@ -258,12 +248,23 @@
   </div>
 
   <ul class="nav-tab-army" id="mainTabs">
-    <li><button type="button" class="tab-link active" data-tab="slip" onclick="switchTab('slip')"><i class="bi bi-cash-stack"></i> Slip Gaji</button></li>
+    <li><button type="button" class="tab-link active" data-tab="beranda" onclick="switchTab('beranda')"><i class="bi bi-house-door-fill"></i> Beranda</button></li>
+    <li><button type="button" class="tab-link" data-tab="slip" onclick="switchTab('slip')"><i class="bi bi-cash-stack"></i> Slip Gaji</button></li>
     <li id="tabUserMgmtItem" style="display:none;"><button type="button" class="tab-link" data-tab="users" onclick="switchTab('users')"><i class="bi bi-people-fill"></i> Manajemen User</button></li>
   </ul>
 
+  <!-- TAB: BERANDA -->
+  <div id="tabBeranda">
+    <div class="beranda-hero">
+      <h4 id="berandaGreeting" class="beranda-hero-title">Selamat datang kembali</h4>
+      <p class="beranda-hero-sub">Berikut ringkasan gaji Anda 3 bulan terakhir.</p>
+    </div>
+    <div id="berandaAdminStat" class="beranda-admin-stat" style="display:none;"></div>
+    <div class="row g-3" id="berandaCards"></div>
+  </div>
+
   <!-- TAB: SLIP GAJI -->
-  <div id="tabSlip">
+  <div id="tabSlip" style="display:none;">
     <div class="filter-card">
       <div class="row g-3">
         <div class="col-6 col-md-4">
@@ -409,13 +410,12 @@
   // URL Web App Apps Script (deploy ulang setelah edit Code.gs supaya URL ini tetap valid)
   const API_URL = "https://script.google.com/macros/s/AKfycbxsdnS8n5Tul7xzccgwlI8SSTwVeiBCYaxS6zzhAzDFRh2A0dupQaREczQyR1K9d55BYg/exec";
 
-  console.log("E-SIPAG index.html (Vercel mode, fetch API) — Slip camo theme + welcome toast — 2026-08-29");
+  console.log("E-SIPAG index.html (Vercel mode, fetch API) — Beranda + slip camo theme — 2026-08-29");
 
   let rawDataGaji = [];
   let rawUsersData = [];
   let currentUser = { nrp: "", nama: "", role: "" };
   let currentPeriode = "";
-  let welcomeToastTimer = null;
 
   function toggleLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
   function formatIndo(a) { return (a === "" || a == null || a === 0 || a === "-") ? "0" : parseFloat(a).toLocaleString('id-ID'); }
@@ -444,39 +444,71 @@
     }
   }
 
-  /* ===================== WELCOME TOAST ===================== */
-  function showWelcomeToast(nama, role) {
-    const hour = new Date().getHours();
-    let greeting = "Selamat malam";
-    if (hour >= 4 && hour < 11) greeting = "Selamat pagi";
-    else if (hour >= 11 && hour < 15) greeting = "Selamat siang";
-    else if (hour >= 15 && hour < 18) greeting = "Selamat sore";
+  /* ===================== BERANDA ===================== */
+  const BULAN_ORDER = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
-    const firstName = (nama || "").trim().split(/\s+/)[0] || "Prajurit";
-    const subText = role === "admin"
-      ? "Selamat bertugas, Admin — semua data siap dipantau hari ini."
-      : "Selamat bertugas — slip gaji Anda sudah siap dilihat.";
+  function renderBeranda() {
+    document.getElementById('berandaGreeting').innerText = currentUser.nama
+      ? `Selamat datang kembali, ${currentUser.nama}`
+      : "Selamat datang kembali";
 
-    document.getElementById('welcomeToastTitle').innerText = `${greeting}, ${firstName}! 👋`;
-    document.getElementById('welcomeToastSub').innerText = subText;
+    const myRows = rawDataGaji.filter(r => r[5]?.toString().trim() === currentUser.nrp?.toString().trim());
+    const sorted = [...myRows].sort((a, b) => {
+      const yearDiff = (parseInt(b[2]) || 0) - (parseInt(a[2]) || 0);
+      if (yearDiff !== 0) return yearDiff;
+      return BULAN_ORDER.indexOf(b[1]) - BULAN_ORDER.indexOf(a[1]);
+    });
+    const last3 = sorted.slice(0, 3);
 
-    const toast = document.getElementById('welcomeToast');
-    toast.classList.add('show');
-    clearTimeout(welcomeToastTimer);
-    welcomeToastTimer = setTimeout(closeWelcomeToast, 5000);
-  }
+    const wrap = document.getElementById('berandaCards');
+    if (last3.length === 0) {
+      wrap.innerHTML = `
+        <div class="col-12">
+          <div class="empty-state-card text-center py-5">
+            <i class="bi bi-inbox" style="font-size:2.5rem; color: var(--army-khaki);"></i>
+            <p class="text-muted mt-3 mb-0">Belum ada data gaji yang tercatat untuk NRP Anda.</p>
+          </div>
+        </div>`;
+    } else {
+      wrap.innerHTML = last3.map((row) => {
+        const originalIndex = rawDataGaji.findIndex(r => r[5]?.toString().trim() === row[5]?.toString().trim() && r[1] === row[1] && r[2] === row[2]);
+        return `
+          <div class="col-12 col-md-4">
+            <div class="beranda-card">
+              <div class="beranda-card-period">${row[1]} ${row[2]}</div>
+              <div class="beranda-card-thp">Rp ${formatIndo(row[19])}</div>
+              <div class="beranda-card-label">Jumlah Diterima (THP)</div>
+              <div class="beranda-card-detail-row"><span>Gaji Bersih</span><span>Rp ${formatIndo(row[6])}</span></div>
+              <div class="beranda-card-detail-row"><span>Total Potongan</span><span>Rp ${formatIndo(row[18])}</span></div>
+              <button class="btn btn-sm btn-army w-100 mt-3" onclick="showDetail(${originalIndex})"><i class="bi bi-eye"></i> Lihat Rincian</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
 
-  function closeWelcomeToast() {
-    document.getElementById('welcomeToast').classList.remove('show');
-    clearTimeout(welcomeToastTimer);
+    const adminStat = document.getElementById('berandaAdminStat');
+    if (currentUser.role === 'admin' && rawDataGaji.length > 0) {
+      const latestYear = Math.max(...rawDataGaji.map(r => parseInt(r[2]) || 0));
+      const rowsLatestYear = rawDataGaji.filter(r => (parseInt(r[2]) || 0) === latestYear);
+      let latestMonthIdx = -1;
+      rowsLatestYear.forEach(r => { const idx = BULAN_ORDER.indexOf(r[1]); if (idx > latestMonthIdx) latestMonthIdx = idx; });
+      const latestMonth = BULAN_ORDER[latestMonthIdx] || '-';
+      const countLatest = rawDataGaji.filter(r => r[1] === latestMonth && (parseInt(r[2]) || 0) === latestYear).length;
+      adminStat.style.display = 'flex';
+      adminStat.innerHTML = `<i class="bi bi-bar-chart-fill me-2"></i><span><b>${countLatest}</b> pegawai tercatat pada periode <b>${latestMonth} ${latestYear}</b></span>`;
+    } else {
+      adminStat.style.display = 'none';
+    }
   }
 
   /* ===================== TAB SWITCHING ===================== */
   function switchTab(tab) {
     document.querySelectorAll('.tab-link').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+    document.getElementById('tabBeranda').style.display = tab === 'beranda' ? 'block' : 'none';
     document.getElementById('tabSlip').style.display = tab === 'slip' ? 'block' : 'none';
     document.getElementById('tabUsers').style.display = tab === 'users' ? 'block' : 'none';
     if (tab === 'users' && currentUser.role === 'admin') loadUsers();
+    if (tab === 'beranda') renderBeranda();
   }
 
   /* ===================== LOGIN / LOGOUT ===================== */
@@ -498,9 +530,8 @@
           roleBadge.innerText = res.role.toUpperCase();
           roleBadge.className = 'badge px-3 py-2 rounded-pill badge-role ' + (res.role === 'admin' ? 'badge-role-admin' : 'badge-role-user');
           document.getElementById('tabUserMgmtItem').style.display = (res.role === 'admin') ? 'block' : 'none';
-          switchTab('slip');
+          switchTab('beranda');
           loadData(res.nrp, res.role);
-          showWelcomeToast(res.nama, res.role);
         } else {
           alert(res.message || "NRP atau Password salah!");
         }
@@ -512,7 +543,6 @@
   }
 
   function handleLogoutUser() {
-    closeWelcomeToast();
     currentUser = { nrp: "", nama: "", role: "" };
     rawDataGaji = [];
     rawUsersData = [];
@@ -520,7 +550,7 @@
     document.getElementById('nrp').value = "";
     document.getElementById('pass').value = "";
     document.getElementById('tabUserMgmtItem').style.display = 'none';
-    switchTab('slip');
+    switchTab('beranda');
     document.getElementById('dashboardPage').style.display = 'none';
     document.getElementById('loginPage').style.display = 'flex';
   }
@@ -531,6 +561,7 @@
       .then(data => {
         rawDataGaji = data.rows || [];
         renderTable(rawDataGaji);
+        renderBeranda();
       })
       .catch(err => alert("Gagal memuat data gaji: " + (err.message || err)));
   }
